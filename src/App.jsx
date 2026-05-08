@@ -502,7 +502,6 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
-    window.alert("ISS Speed Trend: wait 30 seconds for optimal Last 30 measurements data.");
     updateIss();
     updatePeople();
     loadNews();
