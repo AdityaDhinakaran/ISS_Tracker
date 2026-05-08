@@ -157,13 +157,26 @@ async function fetchIssLocation() {
 }
 
 async function fetchPeopleInSpace() {
+  const endpoints = [
+    "/api/astros",
+    `https://api.allorigins.win/raw?url=${encodeURIComponent("http://api.open-notify.org/astros.json")}`,
+    "http://api.open-notify.org/astros.json"
+  ];
+
   let data;
-  try {
-    data = await fetchJson("http://api.open-notify.org/astros.json");
-  } catch {
-    const proxiedUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent("http://api.open-notify.org/astros.json")}`;
-    data = await fetchJson(proxiedUrl);
+  for (const endpoint of endpoints) {
+    try {
+      data = await fetchJson(endpoint);
+      break;
+    } catch {
+      data = null;
+    }
   }
+
+  if (!data) {
+    throw new Error("People-in-space data unavailable");
+  }
+
   return {
     count: data.number,
     people: data.people?.map((person) => `${person.name} (${person.craft})`) ?? []
