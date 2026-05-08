@@ -230,6 +230,54 @@ h2 {
   transform: translateY(0);
 }
 
+.people-stat-card {
+  cursor: help;
+}
+
+.people-stat-card .people-hover-list {
+  position: absolute;
+  z-index: 60;
+  right: 14px;
+  top: calc(100% - 12px);
+  width: min(340px, 82vw);
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 13px;
+  display: grid;
+  gap: 7px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.people-stat-card .people-hover-list b,
+.people-stat-card .people-hover-list small {
+  color: var(--text);
+}
+
+.people-stat-card .people-hover-list b {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.people-stat-card .people-hover-list small {
+  font-size: 0.84rem;
+  line-height: 1.32;
+}
+
+.people-stat-card:hover .people-hover-list,
+.people-stat-card:focus .people-hover-list,
+.people-stat-card:focus-within .people-hover-list {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 .dashboard-grid,
 .news-layout {
   display: grid;
@@ -288,6 +336,16 @@ h2 {
 
 .chart-panel {
   min-height: 520px;
+}
+
+.chart-note {
+  margin: -4px 0 12px;
+  border: 1px solid rgba(56, 189, 248, 0.34);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  background: rgba(56, 189, 248, 0.11);
+  font-size: 0.88rem;
 }
 
 .chart-panel canvas,

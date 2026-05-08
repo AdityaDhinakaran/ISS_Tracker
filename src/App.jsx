@@ -250,6 +250,29 @@ function StatCard({ icon: Icon, label, value, subtext, tooltipItems = [] }) {
   );
 }
 
+function PeopleStatCard({ count, people, error }) {
+  const preview = people.slice(0, 2).join(", ") || error || "Fetching astronauts";
+
+  return (
+    <section className="stat-card people-stat-card" tabIndex={people.length ? 0 : undefined}>
+      <Users size={20} />
+      <div>
+        <p>People In Space</p>
+        <strong>{count || "Unavailable"}</strong>
+        <span>{preview}</span>
+      </div>
+      {people.length ? (
+        <div className="people-hover-list" role="tooltip">
+          <b>All people currently in space</b>
+          {people.map((name) => (
+            <small key={name}>{name}</small>
+          ))}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 function SkeletonCard() {
   return (
     <div className="article-card skeleton">
@@ -479,7 +502,7 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
-    notify("ISS Speed Trend: wait 30 seconds for optimal Last 30 measurements data.", "info", 7000);
+    window.alert("ISS Speed Trend: wait 30 seconds for optimal Last 30 measurements data.");
     updateIss();
     updatePeople();
     loadNews();
@@ -573,13 +596,7 @@ export default function App() {
         <StatCard icon={MapPin} label="Latitude / Longitude" value={currentPosition ? `${currentPosition.lat.toFixed(3)}, ${currentPosition.lon.toFixed(3)}` : "Loading..."} subtext={currentPosition ? formatDate(currentPosition.timestamp) : "Fetching live position"} />
         <StatCard icon={RefreshCw} label="ISS Speed" value={`${Math.round(calculatedSpeed).toLocaleString()} km/h`} subtext={previousPosition ? "Calculated with Haversine formula" : "Waiting for second point"} />
         <StatCard icon={MapPin} label="Current Location" value={place} subtext={`${positions.length} positions tracked`} />
-        <StatCard
-          icon={Users}
-          label="People In Space"
-          value={people.count || "Unavailable"}
-          subtext={people.people.slice(0, 2).join(", ") || peopleError || "Fetching astronauts"}
-          tooltipItems={people.people}
-        />
+        <PeopleStatCard count={people.count} people={people.people} error={peopleError} />
       </section>
 
       <section className="dashboard-grid">
@@ -625,6 +642,7 @@ export default function App() {
               <h2>ISS Speed Trend</h2>
             </div>
           </div>
+          <div className="chart-note">Wait 30 seconds after opening the dashboard for optimal speed trend data.</div>
           <Line
             data={speedChartData}
             options={{
