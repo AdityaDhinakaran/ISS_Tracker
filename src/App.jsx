@@ -138,22 +138,38 @@ async function fetchJson(url, options) {
 }
 
 async function fetchIssLocation() {
-  try {
-    const data = await fetchJson("https://api.wheretheiss.at/v1/satellites/25544");
-    return {
-      lat: Number(data.latitude),
-      lon: Number(data.longitude),
-      timestamp: Date.now(),
-      apiSpeed: Number(data.velocity)
-    };
-  } catch {
-    const data = await fetchJson("http://api.open-notify.org/iss-now.json");
-    return {
-      lat: Number(data.iss_position.latitude),
-      lon: Number(data.iss_position.longitude),
-      timestamp: Number(data.timestamp) * 1000
-    };
+  const endpoints = [
+    "/api/iss",
+    "https://api.wheretheiss.at/v1/satellites/25544",
+    `https://api.allorigins.win/raw?url=${encodeURIComponent("http://api.open-notify.org/iss-now.json")}`,
+    "http://api.open-notify.org/iss-now.json"
+  ];
+
+  for (const endpoint of endpoints) {
+    try {
+      const data = await fetchJson(endpoint);
+      if ("latitude" in data && "longitude" in data) {
+        return {
+          lat: Number(data.latitude),
+          lon: Number(data.longitude),
+          timestamp: data.timestamp ? Number(data.timestamp) * 1000 : Date.now(),
+          apiSpeed: Number(data.velocity)
+        };
+      }
+
+      if (data.iss_position) {
+        return {
+          lat: Number(data.iss_position.latitude),
+          lon: Number(data.iss_position.longitude),
+          timestamp: Number(data.timestamp) * 1000
+        };
+      }
+    } catch {
+      // Try the next source in the fallback list.
+    }
   }
+
+  throw new Error("ISS position data unavailable");
 }
 
 async function fetchPeopleInSpace() {
