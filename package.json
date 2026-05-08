@@ -10,14 +10,14 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "leaflet": "latest",
-    "react-leaflet": "latest",
     "chart.js": "latest",
+    "leaflet": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
     "react-chartjs-2": "latest",
-    "lucide-react": "latest"
-  },
-  "devDependencies": {}
+    "react-dom": "latest",
+    "react-leaflet": "latest",
+    "satellite.js": "^7.0.0",
+    "vite": "latest"
+  }
 }
