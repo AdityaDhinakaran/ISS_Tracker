@@ -225,14 +225,26 @@ function FitMap({ position }) {
   return null;
 }
 
-function StatCard({ icon: Icon, label, value, subtext }) {
+function StatCard({ icon: Icon, label, value, subtext, tooltipItems = [] }) {
   return (
     <section className="stat-card">
       <Icon size={20} />
       <div>
         <p>{label}</p>
         <strong>{value}</strong>
-        {subtext ? <span>{subtext}</span> : null}
+        {subtext ? (
+          <span className={tooltipItems.length ? "tooltip-trigger" : ""} tabIndex={tooltipItems.length ? 0 : undefined}>
+            {subtext}
+            {tooltipItems.length ? (
+              <span className="stat-tooltip" role="tooltip">
+                <b>All people currently in space</b>
+                {tooltipItems.map((item) => (
+                  <small key={item}>{item}</small>
+                ))}
+              </span>
+            ) : null}
+          </span>
+        ) : null}
       </div>
     </section>
   );
@@ -398,10 +410,10 @@ export default function App() {
   const calculatedSpeed = currentPosition?.speed ?? 0;
   const place = currentPosition ? getNearestPlaceName(currentPosition.lat, currentPosition.lon) : "Locating ISS...";
 
-  function notify(message, type = "info") {
+  function notify(message, type = "info", duration = 3200) {
     const id = crypto.randomUUID();
     setToasts((current) => [...current, { id, message, type }]);
-    setTimeout(() => setToasts((current) => current.filter((toast) => toast.id !== id)), 3200);
+    setTimeout(() => setToasts((current) => current.filter((toast) => toast.id !== id)), duration);
   }
 
   async function updateIss(manual = false) {
@@ -467,6 +479,7 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
+    notify("ISS Speed Trend: wait 30 seconds for optimal Last 30 measurements data.", "info", 7000);
     updateIss();
     updatePeople();
     loadNews();
@@ -560,7 +573,13 @@ export default function App() {
         <StatCard icon={MapPin} label="Latitude / Longitude" value={currentPosition ? `${currentPosition.lat.toFixed(3)}, ${currentPosition.lon.toFixed(3)}` : "Loading..."} subtext={currentPosition ? formatDate(currentPosition.timestamp) : "Fetching live position"} />
         <StatCard icon={RefreshCw} label="ISS Speed" value={`${Math.round(calculatedSpeed).toLocaleString()} km/h`} subtext={previousPosition ? "Calculated with Haversine formula" : "Waiting for second point"} />
         <StatCard icon={MapPin} label="Current Location" value={place} subtext={`${positions.length} positions tracked`} />
-        <StatCard icon={Users} label="People In Space" value={people.count || "Unavailable"} subtext={people.people.slice(0, 2).join(", ") || peopleError || "Fetching astronauts"} />
+        <StatCard
+          icon={Users}
+          label="People In Space"
+          value={people.count || "Unavailable"}
+          subtext={people.people.slice(0, 2).join(", ") || peopleError || "Fetching astronauts"}
+          tooltipItems={people.people}
+        />
       </section>
 
       <section className="dashboard-grid">

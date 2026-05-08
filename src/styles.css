@@ -141,6 +141,7 @@ h2 {
   border-radius: 8px;
   display: flex;
   gap: 14px;
+  position: relative;
 }
 
 .stat-card svg {
@@ -163,6 +164,70 @@ h2 {
   margin-bottom: 8px;
   font-size: 1.32rem;
   line-height: 1.18;
+}
+
+.tooltip-trigger {
+  cursor: help;
+  outline: none;
+  position: relative;
+}
+
+.tooltip-trigger::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 6px;
+}
+
+.stat-tooltip {
+  position: absolute;
+  z-index: 40;
+  left: 0;
+  top: calc(100% + 10px);
+  width: min(320px, 74vw);
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  gap: 7px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.stat-card:last-child .stat-tooltip {
+  right: 0;
+  left: auto;
+}
+
+.stat-tooltip b,
+.stat-tooltip small {
+  color: var(--text);
+}
+
+.stat-tooltip b {
+  margin-bottom: 4px;
+}
+
+.stat-tooltip small {
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+.tooltip-trigger:hover .stat-tooltip,
+.tooltip-trigger:focus .stat-tooltip,
+.tooltip-trigger:focus-within .stat-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .dashboard-grid,
